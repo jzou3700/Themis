@@ -23,7 +23,7 @@ class GenSig {
 	}
 
 	public static void main(String[] args) {
-		for(int i=1; i<=1<<6; i*=2) {
+		for(int i=1; i<=1<<8; i*=2) {
 			GenSig genSig = new GenSig(i);
 			genSig.sub(args);
 		}
@@ -38,24 +38,42 @@ class GenSig {
             }
         else try{
  
-            /* Generate a key pair */
- 
-//            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "SunEC");
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
- 
-//            keyGen.initialize(1024, random);
-            keyGen.initialize(571, random);
- 
-            KeyPair pair = keyGen.generateKeyPair();
-            PrivateKey priv = pair.getPrivate();
-            PublicKey pub = pair.getPublic();
- 
- 
-            /* Create a Signature object and initialize it with the private key */
- 
-//            Signature dsa = Signature.getInstance("SHA1withDSA", "SUN"); 
-            Signature dsa = Signature.getInstance("SHA256withECDSA", "SunEC"); 
+        	KeyPairGenerator keyGen;
+        	PrivateKey priv;
+        	PublicKey pub;
+        	Signature dsa;
+        	if(false)
+        	{
+                /* Generate a key pair */
+              keyGen = KeyPairGenerator.getInstance("EC", "SunEC");
+              SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+   
+              keyGen.initialize(571, random);
+   
+              KeyPair pair = keyGen.generateKeyPair();
+              priv = pair.getPrivate();
+              pub = pair.getPublic();
+   
+   
+              /* Create a Signature object and initialize it with the private key */
+   
+              dsa = Signature.getInstance("SHA256withECDSA", "SunEC"); 
+          	} else {
+               /* Generate a key pair */
+              keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+              SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+   
+              keyGen.initialize(1024, random);
+   
+              KeyPair pair = keyGen.generateKeyPair();
+              priv = pair.getPrivate();
+              pub = pair.getPublic();
+   
+   
+              /* Create a Signature object and initialize it with the private key */
+              dsa = Signature.getInstance("SHA1withDSA", "SUN"); 
+          	}
+              
  
             dsa.initSign(priv);
  
@@ -89,7 +107,12 @@ class GenSig {
                     			int totalTransactions = threadNum * 1000;
                     			long elapsedTime = end - start;
                                 System.out.print( " " + totalTransactions + " times digital sign elpased time " + elapsedTime + " millisecs. ");
-                                System.out.println( " Performance is " + (float)totalTransactions * 1000 / elapsedTime + " per seconds" );
+//                                String performance = String.format("%f",  new Float((float)totalTransactions * 1000/elapsedTime).toString() );
+                                float performance = new Float((float)totalTransactions * 1000/ elapsedTime);
+                                String pstr = String.format("%.2f", performance);
+//                                System.out.println( " Performance is " + (float)totalTransactions * 1000 / elapsedTime + " per seconds" );
+                                System.out.println( " Performance is " + pstr + " per seconds" );
+                                
                             }
     					} catch (SignatureException e) {
     						e.printStackTrace();
@@ -130,7 +153,7 @@ class GenSig {
  
 }
 
-// On my Lenovo Thinkpad T420 Intel(R)Core i7-2630QM 
+// On my Lenovo Thinkpad T420 Intel(R)Core i7-2630QM @2.0Ghz
 // 
 // Concurrent Threads are 1.  1000 times digital sign elpased time 3438 millisecs.  Performance is 290.8668 per seconds
 // Concurrent Threads are 2.  2000 times digital sign elpased time 3516 millisecs.  Performance is 568.8282 per seconds
@@ -150,3 +173,22 @@ class GenSig {
 // Concurrent Threads are 32.  32000 times digital sign elpased time 205660 millisecs.  Performance is 155.59662 per seconds
 // Concurrent Threads are 64.  64000 times digital sign elpased time 405578 millisecs.  Performance is 157.79948 per seconds
 //
+
+
+// On lenovo desktop Intel(R) Core(TM) i3-7100 @3.9GHz 
+//
+// Concurrent Threads are 1.  1000 times digital sign elpased time 386 millisecs.  Performance is 2590.67 per seconds
+// Concurrent Threads are 2.  2000 times digital sign elpased time 320 millisecs.  Performance is 6250.00 per seconds
+// Concurrent Threads are 4.  4000 times digital sign elpased time 645 millisecs.  Performance is 6201.55 per seconds
+// Concurrent Threads are 8.  8000 times digital sign elpased time 959 millisecs.  Performance is 8342.02 per seconds
+// Concurrent Threads are 16.  16000 times digital sign elpased time 1742 millisecs.  Performance is 9184.84 per seconds
+// Concurrent Threads are 32.  32000 times digital sign elpased time 3330 millisecs.  Performance is 9609.61 per seconds
+// Concurrent Threads are 64.  64000 times digital sign elpased time 6478 millisecs.  Performance is 9879.59 per seconds
+//
+// Concurrent Threads are 1.  1000 times digital sign elpased time 5988 millisecs.  Performance is 167.00067 per seconds
+// Concurrent Threads are 2.  2000 times digital sign elpased time 7722 millisecs.  Performance is 259.00024 per seconds
+// Concurrent Threads are 4.  4000 times digital sign elpased time 11735 millisecs.  Performance is 340.8607 per seconds
+// Concurrent Threads are 8.  8000 times digital sign elpased time 23651 millisecs.  Performance is 338.25208 per seconds
+// Concurrent Threads are 16.  16000 times digital sign elpased time 46546 millisecs.  Performance is 343.74597 per seconds
+// Concurrent Threads are 32.  32000 times digital sign elpased time 94177 millisecs.  Performance is 339.78574 per seconds
+
