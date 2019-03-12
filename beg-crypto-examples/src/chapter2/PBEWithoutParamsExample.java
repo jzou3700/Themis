@@ -53,6 +53,7 @@ public class PBEWithoutParamsExample
 
         cDec.init(Cipher.DECRYPT_MODE, sKey);
         
+        System.out.println("input : " + Utils.toHex(input));
         System.out.println("cipher : " + Utils.toHex(out));
         System.out.println("gen key: " + Utils.toHex(sKey.getEncoded()));
         System.out.println("gen iv : " + Utils.toHex(cDec.getIV()));
